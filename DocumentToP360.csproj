@@ -4,7 +4,7 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Communicate.Archeo" Version="1.1.2" />
+    <PackageReference Include="Communicate.Archeo" Version="1.1.7" />
     <PackageReference Include="Communicate.Archeo.BackupLogger.ApplicationInsights" Version="1.0.5" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.0.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />

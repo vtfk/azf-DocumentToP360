@@ -11,12 +11,14 @@ using System.Net.Http;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using DocumentToP360.Models.VTFK;
 using System.Collections.Generic;
+using DocumentToP360.Models.P360.EnterpriseDepartmentLookup;
+using System.Linq;
 
 namespace DocumentToP360
 {
     public static class HttpSyncStart
     {
-        //Starting the orchestration
+        //Starts the service and sends the request to the orchestration
         [FunctionName("HttpSyncStart")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Function, methods: "post", Route = "orchestrators/{functionName}/wait")]
@@ -25,9 +27,9 @@ namespace DocumentToP360
             string functionName,
             ILogger log)
         {
-
+            //Creates a guid before starting the orchestration and reads input from user
             string newInstanceId = Guid.NewGuid().ToString();
-            object eventData = await req.Content.ReadAsAsync<object>();
+            DocToP360Request eventData = await req.Content.ReadAsAsync<DocToP360Request>();
             string instanceId = await starter.StartNewAsync(functionName, newInstanceId, (eventData, newInstanceId));
 
             log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
@@ -53,6 +55,7 @@ namespace DocumentToP360
 
                 }
             }, Formatting.Indented));*/
+
             var res = starter.CreateCheckStatusResponse(req, instanceId);
             return res;
         }

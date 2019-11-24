@@ -25,7 +25,8 @@ namespace DocumentToP360
     public class HandleRequest
     {
         private static ILogger _globalLogger;
-
+        
+        //Starts the orchestration
         [FunctionName("HandlePerson")]
         public static async Task Run([OrchestrationTrigger]IDurableOrchestrationContext context, ILogger log)
         {
@@ -46,30 +47,35 @@ namespace DocumentToP360
 
             }
 
-            //
+            //Checks if d exists with given Initials
             EnterpriseDepartmentLookupRequest enterpriseDepartmentLookupRequest = (EnterpriseDepartmentLookupRequest)docToP360Request.DocToP360Request.parameter;
 
+            //Gets the Recno from GetEnterprise
             var recNO = await context.CallActivityAsync<int>("GetEnterPriseRecno", (enterpriseDepartmentLookupRequest, docToP360Request.archeoTransGuid));
 
+            //Sends GetEnterprise recno to CreateCase
             CreateCaseRequest createCaseRequest = (CreateCaseRequest)(docToP360Request.DocToP360Request, recNO);
 
             createCaseRequest.parameter.ResponsibleEnterpriseRecno = recNO;
 
+            //Stores CaseNumber from CreateCase
             var caseNumber = await context.CallActivityAsync<string>("CreateCase", (createCaseRequest, docToP360Request.archeoTransGuid));
 
+            //Creates document with given parameters, CaseNumber from CreateCase and Recno from GetEnterprise
             CreateDocumentRequest createDocumentRequest = (CreateDocumentRequest)(docToP360Request.DocToP360Request, caseNumber, recNO);
 
             CreateDocumentResponse createDocumentResponse = await context.CallActivityAsync<CreateDocumentResponse>("CreateDocument", (createDocumentRequest, docToP360Request.archeoTransGuid));
 
+            //Updates the case with created CaseNumber
             UpdateCaseRequest updateCaseRequest = (UpdateCaseRequest)(docToP360Request.DocToP360Request, caseNumber);
-            
      
             UpdateCaseResponse UpdateCaseResponse = await context.CallActivityAsync<UpdateCaseResponse>("UpdateCase", (updateCaseRequest, docToP360Request.archeoTransGuid));
 
 
 
         }
-
+        
+        //First function. Checks if person exist. RestHandlerService/GetPrivatePerson listens to this function
         [FunctionName("DoesPersonExsist")]
         public static async Task<bool> DoesPersonExsist([ActivityTrigger] IDurableActivityContext context)
         {
@@ -77,7 +83,7 @@ namespace DocumentToP360
 
             PrivatePersonLookupResponse responseGetPrivatePersons = await RestService.RestService.GetPrivatePerson(privatePersonLookupRequest.personLookupRequest, privatePersonLookupRequest.archeoId);
 
-            if (responseGetPrivatePersons.PrivatePersons.Count() == 0)
+            if (responseGetPrivatePersons?.PrivatePersons?.Count() == 0)
             {
                 _globalLogger.LogInformation("Private person does NOT exsist");
                 return false;
@@ -88,6 +94,7 @@ namespace DocumentToP360
             return true;
         }
 
+        //Second function(if person doesn't exist). Creates a person if "DoesPersonExist returns False"
         [FunctionName("CreatePrivatePerson")]
         public static async Task<PrivatePersonSyncResponse> CreatePrivatePerson([ActivityTrigger] IDurableActivityContext context)
         {
@@ -102,6 +109,7 @@ namespace DocumentToP360
             return null;
         }
 
+        //Third function. Checks if given Initials from input returns a recno. 
         [FunctionName("GetEnterPriseRecno")]
         public static async Task<int> GetEnterPriseRecno([ActivityTrigger] IDurableActivityContext context)
         {
@@ -109,12 +117,13 @@ namespace DocumentToP360
 
             EnterpriseDepartmentLookupResponse enterpriseDepartmentLookupResponse = await RestService.RestService.GetEnterpriseRecno(contextInput.enterpriseDepartmentLookupRequest, contextInput.archeoId);
 
-            if (enterpriseDepartmentLookupResponse.Enterprises?.Count() == 0)
+            if (enterpriseDepartmentLookupResponse?.Enterprises?.Count() == 0)
                 return 0;
 
             return enterpriseDepartmentLookupResponse.Enterprises.FirstOrDefault().Recno;
         }
 
+        //Fourth function. Creates a case and returns CaseNumber.
         [FunctionName("CreateCase")]
         public static async Task<string> CreateCase([ActivityTrigger] IDurableActivityContext context)
         {
@@ -130,6 +139,7 @@ namespace DocumentToP360
             return createCaseResponse.CaseNumber;
         }
 
+        //Fifth function. Creates a document and returns DocumentNumber.
         [FunctionName("CreateDocument")]
         public static async Task<CreateDocumentResponse> CreateDocument([ActivityTrigger] IDurableActivityContext context)
         {
@@ -140,6 +150,7 @@ namespace DocumentToP360
             return createDocumentResponse;
         }
 
+        //sixth and last running function. Updates the case for given person. 
         [FunctionName("UpdateCase")]
         public static async Task<UpdateCaseResponse> UpdateCase([ActivityTrigger] IDurableActivityContext context)
         {

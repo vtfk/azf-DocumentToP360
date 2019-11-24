@@ -51,7 +51,7 @@ namespace DocumentToP360.RestService
                 status: "Success",
                 processed: DateTime.UtcNow);
 
-                //Json serializer and making HttpClient for GetPrivatePersons
+                //Json serializer
                 var stringContent = new StringContent(JsonConvert.SerializeObject(privatePersonLookupRequest), Encoding.UTF8, "application/json");
                 HttpResponseMessage result = await newClient.PostAsync(_BaseUrl + "/ContactService/GetPrivatePersons?authKey=" + _ApiAuthKey, stringContent);
 
@@ -118,7 +118,7 @@ namespace DocumentToP360.RestService
                 status: "Success",
                 processed: DateTime.UtcNow);
 
-                //Json serializer and making HttpClient for GetPrivatePersons
+                //Json serializer
                 var stringContent = new StringContent(JsonConvert.SerializeObject(privatePersonSyncRequest), Encoding.UTF8, "application/json");
                 HttpResponseMessage result = await newClient.PostAsync(_BaseUrl + "/ContactService/SynchronizePrivatePerson?authKey=" + _ApiAuthKey, stringContent);
 
@@ -185,7 +185,7 @@ namespace DocumentToP360.RestService
                 status: "Success",
                 processed: DateTime.UtcNow);
 
-                //Json serializer and making HttpClient for GetPrivatePersons
+                //Json serializer
                 var stringContent = new StringContent(JsonConvert.SerializeObject(enterpriseDepartmentLookupRequest), Encoding.UTF8, "application/json");
                 HttpResponseMessage result = await newClient.PostAsync(_BaseUrl + "/ContactService/GetEnterprises?authKey=" + _ApiAuthKey, stringContent);
 
@@ -217,7 +217,6 @@ namespace DocumentToP360.RestService
                       processed: DateTime.UtcNow);
                     return null;
                 }
-
 
             }
             catch (Exception ex)
@@ -252,7 +251,7 @@ namespace DocumentToP360.RestService
                 status: "Success",
                 processed: DateTime.UtcNow);
 
-                //Json serializer and making HttpClient for GetPrivatePersons
+                //Json serializer
                 var stringContent = new StringContent(JsonConvert.SerializeObject(createCaseRequest), Encoding.UTF8, "application/json");
                 HttpResponseMessage result = await newClient.PostAsync(_BaseUrl + "/CaseService/CreateCase?authKey=" + _ApiAuthKey, stringContent);
 
@@ -319,7 +318,7 @@ namespace DocumentToP360.RestService
                 status: "Success",
                 processed: DateTime.UtcNow);
 
-                //Json serializer and making HttpClient for GetPrivatePersons
+                //Json serializer
                 var stringContent = new StringContent(JsonConvert.SerializeObject(updateCaseRequest), Encoding.UTF8, "application/json");
                 HttpResponseMessage result = await newClient.PostAsync(_BaseUrl + "/CaseService/UpdateCase?authKey=" + _ApiAuthKey, stringContent);
 
@@ -407,7 +406,7 @@ namespace DocumentToP360.RestService
                     Status = createDocumentRequest.parameter.StatusFile
                 });
 
-                //Json serializer and making HttpClient for GetPrivatePersons
+                //Json serializer
                 var stringContent = new StringContent(JsonConvert.SerializeObject(createDocumentRequest), Encoding.UTF8, "application/json");
                 HttpResponseMessage result = await newClient.PostAsync(_BaseUrl + "/DocumentService/CreateDocument?authKey=" + _ApiAuthKey, stringContent);
 
