@@ -19,6 +19,7 @@ using DocumentToP360.Models.P360.PrivatePersonSync;
 using DocumentToP360.Models.P360.EnterpriseDepartmentLookup;
 using System.Configuration;
 
+
 namespace DocumentToP360.RestService
 {
 
@@ -34,15 +35,17 @@ namespace DocumentToP360.RestService
         public static string _ArchKey = Environment.GetEnvironmentVariable("ArcheoApiKey");
         public static string _BaseUrl = Environment.GetEnvironmentVariable("BaseURL");
         public static string _ApiAuthKey = Environment.GetEnvironmentVariable("a_Key");
-        public static ArcheoLogger _ArchLogger = new ArcheoLogger(null, new ArcheoConfiguration() { ApiKey = _ArchKey });
 
         //GetPrivatePersons - Checks if a person exist with given PersonalIdNumber from input
         public static async Task<PrivatePersonLookupResponse> GetPrivatePerson(PrivatePersonLookupRequest privatePersonLookupRequest, string transactionId)
         {
+            ArcheoLogger ArchLogger = new ArcheoLogger(null, new ArcheoConfiguration() { ApiKey = _ArchKey });
+
             try
             {
+
                 //Logs the request
-                _ArchLogger.Log(
+                ArchLogger.Log(
                 Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(privatePersonLookupRequest)),
                 "Request to GetPrivatePersons",
                 "privatePersonLookupRequest.json",
@@ -61,7 +64,7 @@ namespace DocumentToP360.RestService
                     var responseData = await result.Content.ReadAsAsync<PrivatePersonLookupResponse>();
 
                     //Logs response from P360
-                    _ArchLogger.Log(
+                    ArchLogger.Log(
                     Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(responseData)),
                     "Response from GetPrivatePersons",
                     "PrivatePersonLookupResponse.json",
@@ -74,7 +77,7 @@ namespace DocumentToP360.RestService
                 else
                 {
                     //If server response isn't 200
-                    _ArchLogger.LogHttpFailure(
+                    ArchLogger.LogHttpFailure(
                       response: result,
                       transactionId: transactionId,
                       transactionType: "DocumentToP360",
@@ -84,12 +87,11 @@ namespace DocumentToP360.RestService
                     return null;
                 }
 
-
             }
             catch (Exception ex)
             {
                 //logs Exception
-                _ArchLogger.LogException(ex, "Error during GetPrivatePersons execution", transactionId: transactionId,
+                ArchLogger.LogException(ex, "Error during GetPrivatePersons execution", transactionId: transactionId,
                 transactionType: "DocumentToP360",
                 status: "Error",
                 logTimestamp: DateTime.UtcNow);
@@ -98,7 +100,7 @@ namespace DocumentToP360.RestService
             finally
             {
                 //Sends all logs to Archeo
-                await _ArchLogger.SendLogs();
+                await ArchLogger.SendLogs();
 
             }
         }
@@ -106,10 +108,11 @@ namespace DocumentToP360.RestService
         //SynchronizePrivatePerson - Creates a new person with given input parameters 
         public static async Task<PrivatePersonSyncResponse> PrivatePersonSync(PrivatePersonSyncRequest privatePersonSyncRequest, string transactionId)
         {
+            ArcheoLogger ArchLogger = new ArcheoLogger(null, new ArcheoConfiguration() { ApiKey = _ArchKey });
             try
             {
                 //Logs the request
-                _ArchLogger.Log(
+                ArchLogger.Log(
                 Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(privatePersonSyncRequest)),
                 "Request to SynchronizePrivatePerson",
                 "privatePersonSyncRequest.Json",
@@ -128,7 +131,7 @@ namespace DocumentToP360.RestService
                     var responseData = await result.Content.ReadAsAsync<PrivatePersonSyncResponse>();
 
                     //Logs response from P360
-                    _ArchLogger.Log(
+                    ArchLogger.Log(
                     Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(responseData)),
                     "Response from SynchronizePrivatePerson",
                     "PrivatePersonSyncResponse.json",
@@ -141,7 +144,7 @@ namespace DocumentToP360.RestService
                 else
                 {
                     //If server response isn't 200
-                    _ArchLogger.LogHttpFailure(
+                    ArchLogger.LogHttpFailure(
                       response: result,
                       transactionId: transactionId,
                       transactionType: "DocumentToP360",
@@ -150,13 +153,11 @@ namespace DocumentToP360.RestService
                       processed: DateTime.UtcNow);
                     return null;
                 }
-
-
             }
             catch (Exception ex)
             {
                 //logs Exception
-                _ArchLogger.LogException(ex, "Error during SynchronizePrivatePerson execution", transactionId: transactionId,
+                ArchLogger.LogException(ex, "Error during SynchronizePrivatePerson execution", transactionId: transactionId,
                 transactionType: "DocumentToP360",
                 status: "Error",
                 logTimestamp: DateTime.UtcNow);
@@ -165,7 +166,7 @@ namespace DocumentToP360.RestService
             finally
             {
                 //Sends all logs to Archeo
-                await _ArchLogger.SendLogs();
+                await ArchLogger.SendLogs();
 
             }
         }
@@ -173,10 +174,11 @@ namespace DocumentToP360.RestService
         //GetEnterprise - Gets Recno for a department with given Initials parameter from input
         public static async Task<EnterpriseDepartmentLookupResponse> GetEnterpriseRecno(EnterpriseDepartmentLookupRequest enterpriseDepartmentLookupRequest, string transactionId)
         {
+            ArcheoLogger ArchLogger = new ArcheoLogger(null, new ArcheoConfiguration() { ApiKey = _ArchKey });
             try
             {
                 //Logs the request
-                _ArchLogger.Log(
+                ArchLogger.Log(
                 Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(enterpriseDepartmentLookupRequest)),
                 "Request to GetEnterprise",
                 "EnterpriseDepartmentLookupRequest.Json",
@@ -195,7 +197,7 @@ namespace DocumentToP360.RestService
                     var responseData = await result.Content.ReadAsAsync<EnterpriseDepartmentLookupResponse>();
 
                     //Logs the response
-                    _ArchLogger.Log(
+                    ArchLogger.Log(
                     Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(responseData)),
                     "Response from GetEnterprise",
                     "EnterpriseDepartmentLookupResponse.json",
@@ -208,7 +210,7 @@ namespace DocumentToP360.RestService
                 else
                 {
                     //If server response isn't 200
-                    _ArchLogger.LogHttpFailure(
+                    ArchLogger.LogHttpFailure(
                       response: result,
                       transactionId: transactionId,
                       transactionType: "DocumentToP360",
@@ -222,7 +224,7 @@ namespace DocumentToP360.RestService
             catch (Exception ex)
             {
                 //logs Exception
-                _ArchLogger.LogException(ex, "Error during GetEnterprise execution", transactionId: transactionId,
+                ArchLogger.LogException(ex, "Error during GetEnterprise execution", transactionId: transactionId,
                 transactionType: "DocumentToP360",
                 status: "Error",
                 logTimestamp: DateTime.UtcNow);
@@ -231,18 +233,19 @@ namespace DocumentToP360.RestService
             finally
             {
                 //Sends log to Archeo
-                await _ArchLogger.SendLogs();
-
+                await ArchLogger.SendLogs();
             }
         }
 
         //CreateCase - Creates a case with given input parameters
         public static async Task<CreateCaseResponse> CreateCase(CreateCaseRequest createCaseRequest, string transactionId)
         {
+            ArcheoLogger ArchLogger = new ArcheoLogger(null, new ArcheoConfiguration() { ApiKey = _ArchKey });
+
             try
             {
                 //Logs the request
-                _ArchLogger.Log(
+                ArchLogger.Log(
                 Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(createCaseRequest)),
                 "Request to CreateCase",
                 "CreateCaseRequest.Json",
@@ -261,7 +264,7 @@ namespace DocumentToP360.RestService
                     var responseData = await result.Content.ReadAsAsync<CreateCaseResponse>();
 
                     //Logs the response
-                    _ArchLogger.Log(
+                    ArchLogger.Log(
                     Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(responseData)),
                     "Response from CreateCase",
                     "CreateCaseResponse.json",
@@ -274,7 +277,7 @@ namespace DocumentToP360.RestService
                 else
                 {
                     //If server response isn't 200
-                    _ArchLogger.LogHttpFailure(
+                    ArchLogger.LogHttpFailure(
                       response: result,
                       transactionId: transactionId,
                       transactionType: "DocumentToP360",
@@ -283,13 +286,11 @@ namespace DocumentToP360.RestService
                       processed: DateTime.UtcNow);
                     return null;
                 }
-
-
             }
             catch (Exception ex)
             {
                 //logs exception
-                _ArchLogger.LogException(ex, "Error during CreateCase execution", transactionId: transactionId,
+                ArchLogger.LogException(ex, "Error during CreateCase execution", transactionId: transactionId,
                 transactionType: "DocumentToP360",
                 status: "Error",
                 logTimestamp: DateTime.UtcNow);
@@ -298,7 +299,7 @@ namespace DocumentToP360.RestService
             finally
             {
                 //Sends log to Archeo
-                await _ArchLogger.SendLogs();
+                await ArchLogger.SendLogs();
 
             }
         }
@@ -306,10 +307,12 @@ namespace DocumentToP360.RestService
         //UpdateCase - Updates a case with given status parameter
         public static async Task<UpdateCaseResponse> UpdateCase(UpdateCaseRequest updateCaseRequest, string transactionId)
         {
+            ArcheoLogger ArchLogger = new ArcheoLogger(null, new ArcheoConfiguration() { ApiKey = _ArchKey });
+
             try
             {
                 //Logs the request
-                _ArchLogger.Log(
+                ArchLogger.Log(
                 Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(updateCaseRequest)),
                 "Request to UpdateCase",
                 "UpdateCaseRequest.Json",
@@ -328,7 +331,7 @@ namespace DocumentToP360.RestService
                     var responseData = await result.Content.ReadAsAsync<UpdateCaseResponse>();
 
                     //Logs the response
-                    _ArchLogger.Log(
+                    ArchLogger.Log(
                     Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(responseData)),
                     "Response from UpdateCase",
                     "UpdateCaseResponse.json",
@@ -341,7 +344,7 @@ namespace DocumentToP360.RestService
                 else
                 {
                     //If server response isn't 200
-                    _ArchLogger.LogHttpFailure(
+                    ArchLogger.LogHttpFailure(
                       response: result,
                       transactionId: transactionId,
                       transactionType: "DocumentToP360",
@@ -354,7 +357,7 @@ namespace DocumentToP360.RestService
             catch (Exception ex)
             {
                 //logs exception
-                _ArchLogger.LogException(ex, "Error during UpdateCase execution", transactionId: transactionId,
+                ArchLogger.LogException(ex, "Error during UpdateCase execution", transactionId: transactionId,
                 transactionType: "DocumentToP360",
                 status: "Error",
                 logTimestamp: DateTime.UtcNow);
@@ -363,18 +366,19 @@ namespace DocumentToP360.RestService
             finally
             {
                 //Sends log to Archeo
-                await _ArchLogger.SendLogs();
-
+                await ArchLogger.SendLogs();
             }
         }
 
         //CreateDocument - Gets document from BLOB storage and sends it to P360
         public static async Task<CreateDocumentResponse> CreateDocument(CreateDocumentRequest createDocumentRequest, string transactionId)
         {
+            ArcheoLogger ArchLogger = new ArcheoLogger(null, new ArcheoConfiguration() { ApiKey = _ArchKey });
+
             try
             {
                 //Logs the request
-                _ArchLogger.Log(
+                ArchLogger.Log(
                 Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(createDocumentRequest)),
                 "Request to CreateDocument",
                 "CreateDocumentRequest.Json",
@@ -416,7 +420,7 @@ namespace DocumentToP360.RestService
                     var responseData = await result.Content.ReadAsAsync<CreateDocumentResponse>();
 
                     //Logs the response
-                    _ArchLogger.Log(
+                    ArchLogger.Log(
                     Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(responseData)),
                     "Response from CreateDocument",
                     "CreateDocumentResponse.json",
@@ -429,7 +433,7 @@ namespace DocumentToP360.RestService
                 else
                 {
                     //logs exception
-                    _ArchLogger.LogHttpFailure(
+                    ArchLogger.LogHttpFailure(
                       response: result,
                       transactionId: transactionId,
                       transactionType: "DocumentToP360",
@@ -444,7 +448,7 @@ namespace DocumentToP360.RestService
             catch (Exception ex)
             {
                 //logs exception
-                _ArchLogger.LogException(ex, "Error during UpdateCase execution", transactionId: transactionId,
+                ArchLogger.LogException(ex, "Error during UpdateCase execution", transactionId: transactionId,
                 transactionType: "DocumentToP360",
                 status: "Error",
                 logTimestamp: DateTime.UtcNow);
@@ -453,8 +457,7 @@ namespace DocumentToP360.RestService
             finally
             {
                 //Sends log to Archeo
-                await _ArchLogger.SendLogs();
-
+                await ArchLogger.SendLogs();
             }
         }
     }

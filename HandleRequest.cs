@@ -70,9 +70,6 @@ namespace DocumentToP360
             UpdateCaseRequest updateCaseRequest = (UpdateCaseRequest)(docToP360Request.DocToP360Request, caseNumber);
      
             UpdateCaseResponse UpdateCaseResponse = await context.CallActivityAsync<UpdateCaseResponse>("UpdateCase", (updateCaseRequest, docToP360Request.archeoTransGuid));
-
-
-
         }
         
         //First function. Checks if person exist. RestHandlerService/GetPrivatePerson listens to this function
@@ -88,7 +85,6 @@ namespace DocumentToP360
                 _globalLogger.LogInformation("Private person does NOT exsist");
                 return false;
             }
-
 
             _globalLogger.LogInformation("Private person does exsist");
             return true;
@@ -160,6 +156,5 @@ namespace DocumentToP360
 
             return updateCaseResponse;
         }
-
     }
 }

@@ -28,9 +28,9 @@ namespace DocumentToP360
             ILogger log)
         {
             //Creates a guid before starting the orchestration and reads input from user
-            string newInstanceId = Guid.NewGuid().ToString();
+            string transactionId = Guid.NewGuid().ToString();
             DocToP360Request eventData = await req.Content.ReadAsAsync<DocToP360Request>();
-            string instanceId = await starter.StartNewAsync(functionName, newInstanceId, (eventData, newInstanceId));
+            string instanceId = await starter.StartNewAsync(functionName, transactionId, (eventData, transactionId));
 
             log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
  
@@ -56,7 +56,7 @@ namespace DocumentToP360
                 }
             }, Formatting.Indented));*/
 
-            var res = starter.CreateCheckStatusResponse(req, instanceId);
+            var res = starter.CreateCheckStatusResponse(req, transactionId);
             return res;
         }
     }
